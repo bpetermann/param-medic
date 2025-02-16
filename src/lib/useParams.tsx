@@ -1,40 +1,22 @@
 import { useCallback, useEffect, useState } from 'react';
+import { useParamContext } from './context/actions';
+import { convertParams, parse } from './utils';
 
-const parse = (data: string) => {
-  try {
-    return JSON.parse(data);
-  } catch {
-    return data;
-  }
-};
-
-const convertParams = <T extends object>(params: T) => {
-  const newSearchParams = new URLSearchParams();
-
-  Object.entries(params).forEach(([key, value]) => {
-    if (value === null || value === undefined) return;
-    newSearchParams.set(
-      key,
-      typeof value === 'object' ? JSON.stringify(value) : String(value)
-    );
-  });
-
-  return newSearchParams;
-};
-
-export function useParams<T extends object>(): [
-  searchParams: Partial<T>,
+export function useParams<T extends Record<string, unknown>>(): [
+  searchParams: T,
   setSearchParams: (
-    setFn: (prev: Partial<T>) => Partial<Pick<T, keyof T>>,
+    setFn: (prev: T) => T,
     options?: { replace?: boolean }
   ) => void
 ] {
-  const [searchParams, setSearchParamsState] = useState<Partial<T>>(() => {
+  const { paramKeys, isInContext } = useParamContext();
+
+  const [searchParams, setSearchParamsState] = useState<T>(() => {
     if (typeof window === 'undefined') return {} as T;
     return Object.fromEntries(
-      [...new URLSearchParams(window.location.search).entries()].map(
-        ([key, value]) => [key, parse(value)]
-      )
+      [...new URLSearchParams(window.location.search).entries()]
+        .filter(([key]) => !isInContext || paramKeys.includes(key))
+        .map(([key, value]) => [key, parse(value)])
     ) as T;
   });
 
@@ -42,26 +24,30 @@ export function useParams<T extends object>(): [
     const handlePopState = () => {
       setSearchParamsState(
         Object.fromEntries(
-          [...new URLSearchParams(window.location.search).entries()].map(
-            ([key, value]) => [key, parse(value)]
-          )
+          [...new URLSearchParams(window.location.search).entries()]
+            .filter(([key]) => !isInContext || paramKeys.includes(key))
+            .map(([key, value]) => [key, parse(value)])
         ) as T
       );
     };
 
     window.addEventListener('popstate', handlePopState);
     return () => window.removeEventListener('popstate', handlePopState);
-  }, []);
+  }, [isInContext, paramKeys]);
 
   const setSearchParams = useCallback(
-    (
-      setFn: (prev: Partial<T>) => Partial<Pick<T, keyof T>>,
-      options?: { replace?: boolean }
-    ) => {
+    (setFn: (prev: T) => T, options?: { replace?: boolean }) => {
       if (typeof window === 'undefined') return;
 
       const newParams = setFn(searchParams);
-      const newSearchParams = convertParams(newParams);
+
+      const filteredParams: T = isInContext
+        ? (Object.fromEntries(
+            Object.entries(newParams).filter(([key]) => paramKeys.includes(key))
+          ) as T)
+        : newParams;
+
+      const newSearchParams = convertParams(filteredParams);
 
       if (options?.replace) {
         window.history.replaceState({}, '', `?${newSearchParams.toString()}`);
@@ -69,9 +55,9 @@ export function useParams<T extends object>(): [
         window.history.pushState({}, '', `?${newSearchParams.toString()}`);
       }
 
-      setSearchParamsState(newParams);
+      setSearchParamsState(filteredParams);
     },
-    [searchParams]
+    [searchParams, paramKeys, isInContext]
   );
 
   return [searchParams, setSearchParams];

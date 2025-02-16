@@ -10,7 +10,9 @@ export const ParamContextProvider = ({
   const [paramKeys, setParamKeys] = useState<string[]>(keys || []);
 
   return (
-    <ParamContext.Provider value={{ paramKeys, setParamKeys, inContext: true }}>
+    <ParamContext.Provider
+      value={{ paramKeys, setParamKeys, isInContext: true }}
+    >
       {children}
     </ParamContext.Provider>
   );
