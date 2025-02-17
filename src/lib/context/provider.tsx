@@ -9,9 +9,15 @@ export const ParamContextProvider = ({
 }>) => {
   const [paramKeys, setParamKeys] = useState<string[]>(keys || []);
 
+  const deleteKey = (key: string) =>
+    setParamKeys((prev) => prev.filter((value) => value !== key));
+
+  const addKey = (key: string) =>
+    setParamKeys((prev) => [...prev, ...(!prev.includes(key) ? [key] : [])]);
+
   return (
     <ParamContext.Provider
-      value={{ paramKeys, setParamKeys, isInContext: true }}
+      value={{ paramKeys, deleteKey, addKey, isInContext: true }}
     >
       {children}
     </ParamContext.Provider>
