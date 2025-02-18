@@ -13,7 +13,7 @@ export const ParamContextProvider = ({
     setParamKeys((prev) => prev.filter((value) => value !== key));
 
   const addKey = (key: string) =>
-    setParamKeys((prev) => [...prev, ...(!prev.includes(key) ? [key] : [])]);
+    setParamKeys((prev) => (prev.includes(key) ? prev : [...prev, key]));
 
   return (
     <ParamContext.Provider
