@@ -1,45 +1,49 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParamContext } from './context/actions';
 import { convertParams, parse } from './utils';
 
-export function useParams<T extends Record<string, unknown>>(): [
-  searchParams: T,
-  setSearchParams: (
-    setFn: (prev: T) => T,
-    options?: { replace?: boolean }
-  ) => void
+export function useParams<T extends Record<string, unknown>>(
+  initialState?: T
+): [
+  params: T,
+  setParams: (setFn: (prev: T) => T, options?: { replace?: boolean }) => void
 ] {
   const { paramKeys, isInContext } = useParamContext();
 
-  const [searchParams, setSearchParamsState] = useState<T>(() => {
+  const getUrlParams = useMemo(() => {
     if (typeof window === 'undefined') return {} as T;
     return Object.fromEntries(
       [...new URLSearchParams(window.location.search).entries()]
         .filter(([key]) => !isInContext || paramKeys.includes(key))
         .map(([key, value]) => [key, parse(value)])
     ) as T;
+  }, [isInContext, paramKeys]);
+
+  const [searchParams, setSearchParamsState] = useState<T>(() => {
+    return Object.assign({}, initialState, getUrlParams);
   });
 
   useEffect(() => {
+    let isMounted = true;
     const handlePopState = () => {
-      setSearchParamsState(
-        Object.fromEntries(
-          [...new URLSearchParams(window.location.search).entries()]
-            .filter(([key]) => !isInContext || paramKeys.includes(key))
-            .map(([key, value]) => [key, parse(value)])
-        ) as T
-      );
+      if (isMounted) {
+        setSearchParamsState(getUrlParams);
+      }
     };
 
     window.addEventListener('popstate', handlePopState);
-    return () => window.removeEventListener('popstate', handlePopState);
-  }, [isInContext, paramKeys]);
+    return () => {
+      isMounted = false;
+      window.removeEventListener('popstate', handlePopState);
+    };
+  }, [getUrlParams, paramKeys]);
 
   const setSearchParams = useCallback(
     (setFn: (prev: T) => T, options?: { replace?: boolean }) => {
       if (typeof window === 'undefined') return;
 
       const newParams = setFn(searchParams);
+      if (JSON.stringify(newParams) === JSON.stringify(searchParams)) return;
 
       const filteredParams: T = isInContext
         ? (Object.fromEntries(
