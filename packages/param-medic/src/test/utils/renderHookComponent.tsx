@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import React, { ReactNode } from 'react';
 import { render } from './index';
 
 export function HookTestComponent<T>({

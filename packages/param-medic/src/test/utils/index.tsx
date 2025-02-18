@@ -1,9 +1,9 @@
-import { render as rtlRender } from '@testing-library/react';
-import { ReactElement } from 'react';
+import { render } from '@testing-library/react';
+import React, { ReactElement } from 'react';
 import { ParamContextProvider } from '../../lib/context/provider';
 
 function customRender(ui: ReactElement, options?: { keys?: string[] }) {
-  return rtlRender(
+  return render(
     <ParamContextProvider keys={options?.keys || []}>{ui}</ParamContextProvider>
   );
 }
