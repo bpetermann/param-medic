@@ -1,0 +1,3 @@
+npm run test
+cd packages/param-medic && npm run lint . --fix || exit 1
+

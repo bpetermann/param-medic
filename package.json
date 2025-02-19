@@ -9,7 +9,11 @@
   "scripts": {
     "build": "npm run build -w param-medic",
     "test": "npm run test -w param-medic",
+    "test:watch": "npm run test:watch -w param-medic",
     "dev": "npm run dev -w playground",
     "copy-readme": "cp ./README.md ./packages/param-medic/README.md"
+  },
+  "devDependencies": {
+    "husky": "^9.1.7"
   }
 }
