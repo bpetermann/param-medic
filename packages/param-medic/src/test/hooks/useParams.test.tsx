@@ -46,6 +46,18 @@ describe('useParamsHook', () => {
     expect(screen.queryByText('2')).toBeInTheDocument();
   });
 
+  it('should display the correct value from a long url', () => {
+    defineWindow({ foo: 'bar', baz: true, count: 2 });
+
+    renderHookComponent(
+      () => useParams<{ count: number }>(),
+      ([params]) => <div>{params.count}</div>,
+      { keys: ['count'] }
+    );
+
+    expect(screen.queryByText('2')).toBeInTheDocument();
+  });
+
   it('should display the correct value after update', () => {
     defineWindow({ count: 0 });
 
