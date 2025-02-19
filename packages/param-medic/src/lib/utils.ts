@@ -19,3 +19,21 @@ export const convertParams = <T extends Record<string, unknown>>(params: T) => {
 
   return newSearchParams;
 };
+
+export const buildUrlWithParams = <T extends Record<string, unknown>>(
+  url: string = '/',
+  params?: T
+): string => {
+  if (!params || Object.keys(params).length === 0) return url;
+
+  const paramString = Object.entries(params)
+    .map(
+      ([key, value]) =>
+        `${encodeURIComponent(key)}=${encodeURIComponent(
+          typeof value === 'object' ? JSON.stringify(value) : String(value)
+        )}`
+    )
+    .join('&');
+
+  return url.includes('?') ? `${url}&${paramString}` : `${url}?${paramString}`;
+};
