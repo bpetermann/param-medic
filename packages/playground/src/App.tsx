@@ -1,18 +1,43 @@
-import { useParams } from 'param-medic';
-import { useState } from 'react';
+import { buildUrlWithParams, useParams } from 'param-medic';
+import { NavLink, useNavigate } from 'react-router';
 import './App.css';
 import reactLogo from './assets/react.svg';
 import viteLogo from '/vite.svg';
 
-type Params = {
-  count?: number;
+export type MyParams = {
+  count: number;
+  form: {
+    name?: string;
+    age?: number;
+  };
+};
+
+const initialValue = {
+  count: 1,
+  form: {
+    name: '',
+    age: 0,
+  },
 };
 
 function App() {
-  const [count, setCount] = useState(0);
-  const [params, setSearchParams] = useParams<Params>();
+  const navigate = useNavigate();
 
-  console.log(params);
+  const [params, setParams] = useParams<MyParams>(initialValue);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setParams(
+      (prev) => ({
+        ...prev,
+        form: { ...prev.form, [e.target.name]: e.target.value },
+      }),
+      {
+        replace: true,
+      }
+    );
+  };
+
+  console.log(params.form);
 
   return (
     <>
@@ -24,25 +49,53 @@ function App() {
           <img src={reactLogo} className='logo react' alt='React logo' />
         </a>
       </div>
-      <h1>Vite + React</h1>
+      <h1>App</h1>
+      <NavLink to={buildUrlWithParams('home', params)}>Home</NavLink>
       <div className='card'>
         <button
-          onClick={() => {
-            setCount((prevCount) => {
-              const newCount = prevCount + 1;
-
-              setSearchParams((prevParams) => ({
-                ...prevParams,
-                count: newCount,
-              }));
-
-              return newCount;
-            });
-          }}
+          onClick={() =>
+            setParams(
+              (prev) => ({
+                ...prev,
+                count: prev.count + 1,
+              }),
+              {
+                replace: true,
+              }
+            )
+          }
         >
-          count is {count}
+          increase
         </button>
-
+        <form>
+          <div>
+            <label>Name:</label>
+            <input
+              type='text'
+              name='name'
+              value={params.form.name}
+              onChange={handleChange}
+            />
+          </div>
+          <div>
+            <label>Age:</label>
+            <input
+              type='number'
+              name='age'
+              value={params.form.age}
+              onChange={handleChange}
+            />
+          </div>
+          <button
+            onClick={(e) => {
+              e.preventDefault();
+              navigate(buildUrlWithParams('home', params));
+            }}
+            type='button'
+          >
+            Save
+          </button>
+        </form>
         <p>
           Edit <code>src/App.tsx</code> and save to test HMR
         </p>
