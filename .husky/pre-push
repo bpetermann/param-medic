@@ -1,2 +1,1 @@
 cd packages/param-medic && npm run test && npm run lint
-
