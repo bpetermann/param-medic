@@ -27,7 +27,17 @@ export function useParams<T extends Record<string, unknown>>(
     let isMounted = true;
     const handlePopState = () => {
       if (isMounted) {
-        setSearchParamsState(getUrlParams);
+        setSearchParamsState(
+          Object.assign(
+            {},
+            initialState,
+            Object.fromEntries(
+              [...new URLSearchParams(window.location.search).entries()]
+                .filter(([key]) => !isInContext || paramKeys.includes(key))
+                .map(([key, value]) => [key, parse(value)])
+            )
+          ) as T
+        );
       }
     };
 
@@ -36,7 +46,7 @@ export function useParams<T extends Record<string, unknown>>(
       isMounted = false;
       window.removeEventListener('popstate', handlePopState);
     };
-  }, [getUrlParams, paramKeys]);
+  }, [initialState, isInContext, paramKeys]);
 
   const setSearchParams = useCallback(
     (setFn: (prev: T) => T, options?: { replace?: boolean }) => {
