@@ -23,7 +23,7 @@ const initialValue = {
 function App() {
   const navigate = useNavigate();
 
-  const [params, setParams] = useParams<MyParams>(initialValue);
+  const [params, setParams, resetParams] = useParams<MyParams>(initialValue);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setParams(
@@ -32,12 +32,10 @@ function App() {
         form: { ...prev.form, [e.target.name]: e.target.value },
       }),
       {
-        replace: true,
+        replace: false,
       }
     );
   };
-
-  console.log(params.form);
 
   return (
     <>
@@ -50,6 +48,7 @@ function App() {
         </a>
       </div>
       <h1>App</h1>
+      <button onClick={resetParams}>Reset</button>
       <NavLink to={buildUrlWithParams('home', params)}>Home</NavLink>
       <div className='card'>
         <button
@@ -96,6 +95,8 @@ function App() {
             Save
           </button>
         </form>
+        <button onClick={() => window.history.back()}>back</button>
+
         <p>
           Edit <code>src/App.tsx</code> and save to test HMR
         </p>

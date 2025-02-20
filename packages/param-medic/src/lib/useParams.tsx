@@ -6,7 +6,8 @@ export function useParams<T extends Record<string, unknown>>(
   initialState?: T
 ): [
   params: T,
-  setParams: (setFn: (prev: T) => T, options?: { replace?: boolean }) => void
+  setParams: (setFn: (prev: T) => T, options?: { replace?: boolean }) => void,
+  resetParams: () => void
 ] {
   const { paramKeys, isInContext } = useParamContext();
 
@@ -74,5 +75,14 @@ export function useParams<T extends Record<string, unknown>>(
     [searchParams, paramKeys, isInContext]
   );
 
-  return [searchParams, setSearchParams];
+  const resetParams = useCallback(() => {
+    if (typeof window === 'undefined') return;
+
+    setSearchParamsState(initialState ?? ({} as T));
+    const resetSearchParams = convertParams(initialState ?? {});
+
+    window.history.replaceState({}, '', `?${resetSearchParams.toString()}`);
+  }, [initialState]);
+
+  return [searchParams, setSearchParams, resetParams];
 }

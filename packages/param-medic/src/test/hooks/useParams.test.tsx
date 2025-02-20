@@ -98,4 +98,37 @@ describe('useParamsHook', () => {
 
     expect(screen.queryByText('2')).not.toBeInTheDocument();
   });
+
+  it('should correctly reset to default values', () => {
+    defineWindow({});
+
+    renderHookComponent(
+      () => useParams<{ count: number }>({ count: 1 }),
+      ([params, setParams, resetParams]) => (
+        <div>
+          <button
+            data-testid='increase'
+            onClick={() =>
+              setParams((prev) => ({ ...prev, count: prev.count + 1 }), {
+                replace: false,
+              })
+            }
+          >
+            <span>{params.count}</span>
+          </button>
+          <button onClick={resetParams} data-testid='reset' />
+        </div>
+      ),
+      { keys: ['count'] }
+    );
+
+    const increase = screen.getByTestId('increase');
+    const reset = screen.getByTestId('reset');
+
+    fireEvent.click(increase);
+    expect(screen.queryByText('2')).toBeInTheDocument();
+
+    fireEvent.click(reset);
+    expect(screen.queryByText('1')).toBeInTheDocument();
+  });
 });
