@@ -3,7 +3,7 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter, Route, Routes } from 'react-router';
 import App from './App.tsx';
-import Home from './Home.tsx';
+import Form from './Form.tsx';
 import './index.css';
 
 createRoot(document.getElementById('root')!).render(
@@ -11,7 +11,7 @@ createRoot(document.getElementById('root')!).render(
     <ParamContextProvider keys={['count', 'form']}>
       <BrowserRouter>
         <Routes>
-          <Route path='/home' element={<Home />} />
+          <Route path='/form' element={<Form />} />
           <Route path='/' element={<App />} />
         </Routes>
       </BrowserRouter>

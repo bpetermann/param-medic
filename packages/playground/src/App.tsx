@@ -1,5 +1,5 @@
 import { buildUrlWithParams, useParams } from 'param-medic';
-import { NavLink, useNavigate } from 'react-router';
+import { NavLink } from 'react-router';
 import './App.css';
 import reactLogo from './assets/react.svg';
 import viteLogo from '/vite.svg';
@@ -12,30 +12,11 @@ export type MyParams = {
   };
 };
 
-const initialValue = {
-  count: 1,
-  form: {
-    name: '',
-    age: 0,
-  },
-};
-
 function App() {
-  const navigate = useNavigate();
-
-  const [params, setParams, resetParams] = useParams<MyParams>(initialValue);
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setParams(
-      (prev) => ({
-        ...prev,
-        form: { ...prev.form, [e.target.name]: e.target.value },
-      }),
-      {
-        replace: false,
-      }
-    );
-  };
+  const [params, setParams] = useParams<MyParams>({
+    count: 1,
+    form: { name: '', age: 0 },
+  });
 
   return (
     <>
@@ -47,9 +28,8 @@ function App() {
           <img src={reactLogo} className='logo react' alt='React logo' />
         </a>
       </div>
-      <h1>App</h1>
-      <button onClick={resetParams}>Reset</button>
-      <NavLink to={buildUrlWithParams('home', params)}>Home</NavLink>
+      <h1>Home</h1>
+      <NavLink to={buildUrlWithParams('/form', params)}>Form</NavLink>
       <div className='card'>
         <button
           onClick={() =>
@@ -59,43 +39,13 @@ function App() {
                 count: prev.count + 1,
               }),
               {
-                replace: true,
+                replace: false,
               }
             )
           }
         >
-          increase
+          count is {params.count}
         </button>
-        <form>
-          <div>
-            <label>Name:</label>
-            <input
-              type='text'
-              name='name'
-              value={params.form.name}
-              onChange={handleChange}
-            />
-          </div>
-          <div>
-            <label>Age:</label>
-            <input
-              type='number'
-              name='age'
-              value={params.form.age}
-              onChange={handleChange}
-            />
-          </div>
-          <button
-            onClick={(e) => {
-              e.preventDefault();
-              navigate(buildUrlWithParams('home', params));
-            }}
-            type='button'
-          >
-            Save
-          </button>
-        </form>
-        <button onClick={() => window.history.back()}>back</button>
 
         <p>
           Edit <code>src/App.tsx</code> and save to test HMR
