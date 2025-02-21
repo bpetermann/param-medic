@@ -44,8 +44,10 @@ export function useParams<T extends Record<string, unknown>>(
 
     window.addEventListener('popstate', handlePopState);
     return () => {
-      isMounted = false;
-      window.removeEventListener('popstate', handlePopState);
+      setTimeout(() => {
+        isMounted = false;
+        window.removeEventListener('popstate', handlePopState);
+      }, 0);
     };
   }, [initialState, isInContext, paramKeys]);
 
