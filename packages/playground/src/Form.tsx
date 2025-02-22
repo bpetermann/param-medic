@@ -10,7 +10,7 @@ function Form() {
 
   const [params, setParams, resetParams] = useParams<MyParams>({
     count: 1,
-    form: { name: '', age: 0 },
+    form: { name: '', email: '' },
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -38,28 +38,26 @@ function Form() {
       <h1>Form</h1>
       <NavLink to={buildUrlWithParams('/', params)}>Home</NavLink>
       <div className='card'>
-        <p>Name is: {params.form.name}</p>
-        <p>Age is: {params.form.age}</p>
-        <p>Count is: {params.count}</p>
+        <button
+          onClick={() =>
+            setParams(
+              (prev) => ({
+                ...prev,
+                count: prev.count + 1,
+              }),
+              {
+                replace: false,
+              }
+            )
+          }
+        >
+          count is {params.count}
+        </button>
       </div>
-      <button
-        onClick={() =>
-          setParams(
-            (prev) => ({
-              ...prev,
-              count: prev.count + 1,
-            }),
-            {
-              replace: false,
-            }
-          )
-        }
-      >
-        count is {params.count}
-      </button>
+
       <form>
         <div>
-          <label>Name:</label>
+          <label>Your Name:</label>
           <input
             type='text'
             name='name'
@@ -68,25 +66,36 @@ function Form() {
           />
         </div>
         <div>
-          <label>Age:</label>
+          <label>Your Email:</label>
           <input
-            type='number'
-            name='age'
-            value={params.form.age}
+            type='text'
+            name='email'
+            value={params.form.email}
             onChange={handleChange}
           />
         </div>
-        <button
-          onClick={(e) => {
-            e.preventDefault();
-            navigate(buildUrlWithParams('/', params));
-          }}
-          type='button'
-        >
-          Save
-        </button>
+        <div>
+          <button
+            onClick={(e) => {
+              e.preventDefault();
+              navigate(buildUrlWithParams('/', params));
+            }}
+            type='submit'
+            className='submit'
+          >
+            Save
+          </button>
+          <button
+            className='reset'
+            onClick={(e) => {
+              e.preventDefault();
+              resetParams();
+            }}
+          >
+            Reset
+          </button>
+        </div>
       </form>
-      <button onClick={resetParams}>Reset</button>
 
       <div className='card'>
         <p>

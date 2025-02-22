@@ -14,3 +14,5 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - **`useParamContext`** – Hook to access and manipulate the parameter context dynamically.
 - **`ParamContextProvider`** – Context provider to define expected keys for parameter filtering.
 - **`buildUrlWithParams`** – Utility function to construct URLs with query parameters.
+
+[0.1.0]: https://github.com/bpetermann/param-medic/releases/edit/0.1.0

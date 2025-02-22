@@ -8,14 +8,14 @@ export type MyParams = {
   count: number;
   form: {
     name?: string;
-    age?: number;
+    email?: string;
   };
 };
 
 function App() {
   const [params, setParams] = useParams<MyParams>({
     count: 1,
-    form: { name: '', age: 0 },
+    form: { name: '', email: '' },
   });
 
   return (
