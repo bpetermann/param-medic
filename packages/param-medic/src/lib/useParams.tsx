@@ -11,6 +11,9 @@ export function useParams<T extends Record<string, unknown>>(
 ] {
   const { paramKeys, isInContext } = useParamContext();
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const stableInitialState = useMemo(() => initialState || ({} as T), []);
+
   const getUrlParams = useMemo(() => {
     if (typeof window === 'undefined') return {} as T;
     return Object.fromEntries(
@@ -21,7 +24,7 @@ export function useParams<T extends Record<string, unknown>>(
   }, [isInContext, paramKeys]);
 
   const [searchParams, setSearchParamsState] = useState<T>(() => {
-    return Object.assign({}, initialState, getUrlParams);
+    return Object.assign({}, stableInitialState, getUrlParams);
   });
 
   useEffect(() => {
@@ -31,7 +34,7 @@ export function useParams<T extends Record<string, unknown>>(
         setSearchParamsState(
           Object.assign(
             {},
-            initialState,
+            stableInitialState,
             Object.fromEntries(
               [...new URLSearchParams(window.location.search).entries()]
                 .filter(([key]) => !isInContext || paramKeys.includes(key))
@@ -44,12 +47,10 @@ export function useParams<T extends Record<string, unknown>>(
 
     window.addEventListener('popstate', handlePopState);
     return () => {
-      setTimeout(() => {
-        isMounted = false;
-        window.removeEventListener('popstate', handlePopState);
-      }, 0);
+      isMounted = false;
+      window.removeEventListener('popstate', handlePopState);
     };
-  }, [initialState, isInContext, paramKeys]);
+  }, [stableInitialState, isInContext, paramKeys]);
 
   const setSearchParams = useCallback(
     (setFn: (prev: T) => T, options?: { replace?: boolean }) => {
