@@ -1,7 +1,7 @@
 {
   "name": "param-medic",
   "private": false,
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "",
   "type": "module",
   "main": "dist/index.umd.js",
@@ -11,6 +11,12 @@
     "dist",
     "LICENSE",
     "README.md"
+  ],
+  "keywords": [
+    "react",
+    "state",
+    "params",
+    "hooks"
   ],
   "scripts": {
     "dev": "vite",
