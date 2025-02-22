@@ -1,50 +1,85 @@
-# React + TypeScript + Vite
+# Param Medic
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+**Param-medic** helps you manage your state using URL parameters and provides a hook for easy retrieval, updating, and deletion.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **useParams** – Retrieve, update, and reset state via URL parameters.
+- **ParamContextProvider** – Define expected keys to filter URL parameters.
+- **Seamless State Syncing** – Keeps state in sync with browser navigation (Back/Forward).
 
-## Expanding the ESLint configuration
+## Usage
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+The **useParams** hook returns an array with three values:
 
-- Configure the top-level `parserOptions` property like this:
+1. **Params** – The current state derived from URL parameters.
+2. **setParams** – Updates the state. Accepts a function and an optional `{ replace: boolean }` object to determine if the browser history should be replaced or pushed.
+3. **resetParams** – Resets the state to its initial value.
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+> **Note:** If no initial state is provided, params may be `undefined`. Ensure your logic accounts for this.
+
+### Example
+
+A URL of `/?count=5` correctly displays `count: 5` and overrides the initial value. If `/` is visited without parameters, it falls back to the initial state `{ count: 1 }`. With `replace: true`, the counter decreases when clicking the back button.
+
+```jsx
+import { useParams } from 'param-medic';
+
+function App() {
+  const [params, setParams] = useParams < { count: number } > { count: 1 };
+
+  return (
+    <button
+      onClick={() =>
+        setParams((prev) => ({ ...prev, count: prev.count + 1 }), {
+          replace: false,
+        })
+      }
+    >
+      Count is {params.count}
+    </button>
+  );
+}
+
+export default App;
 ```
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+## Context-Based Parameter Filtering
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
+Wrap components inside `ParamContextProvider` to specify which URL parameters should be managed.
 
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
+- Only listed keys are used.
+- Other URL parameters remain unchanged until an update occurs.
+- On updates, only listed keys persist, and unlisted ones are removed.
+
+### Example
+
+Wrap your components into the **ParamContextProvider** to specify the keys which you expect. The context ensures that only these keys are used, while other parameters are ignored and removed from the url during an update.
+
+```jsx
+import { ParamContextProvider } from 'param-medic';
+
+createRoot(document.getElementById('root')!).render(
+  <StrictMode>
+    <ParamContextProvider keys={['count']}>
+      <App />
+    </ParamContextProvider>
+  </StrictMode>
+);
 ```
+
+You cann add and delete keys dynamically using the `useParamContext` hook.
+
+## Contributing
+
+Create a branch on your fork, add commits to your fork, and open a pull request from your fork to this repository.
+
+## Changelog
+
+To check full changelog click [here](https://github.com/bpetermann/param-medic/blob/main/CHANGELOG.md)
+
+## License
+
+[MIT][github-license-url]
+
+[github-license-url]: https://github.com/bpetermann/param-medic/blob/main/LICENSE

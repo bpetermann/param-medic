@@ -1,6 +1,6 @@
 # Param Medic
 
-**Param-medic** helps you manage your state using url parameters and provides a hook for easy retrieval, updating and deletion.
+**Param-medic** helps you manage your state using URL parameters and provides a hook for easy retrieval, updating, and deletion.
 
 ## Features
 
@@ -10,7 +10,7 @@
 
 ## Usage
 
-The **useParams** hook, returns an array with three values:
+The **useParams** hook returns an array with three values:
 
 1. **Params** – The current state derived from URL parameters.
 2. **setParams** – Updates the state. Accepts a function and an optional `{ replace: boolean }` object to determine if the browser history should be replaced or pushed.
@@ -18,9 +18,9 @@ The **useParams** hook, returns an array with three values:
 
 > **Note:** If no initial state is provided, params may be `undefined`. Ensure your logic accounts for this.
 
-### 📝 Example
+### Example
 
-A URL of `/?count=5` correctly displays `count: 5` and overrides the initial value. If `/` is visited without parameters, it falls back to the initial state `{ count: 1 }`. With replace set to `true` you can see the counter go down when you click the back button.
+A URL of `/?count=5` correctly displays `count: 5` and overrides the initial value. If `/` is visited without parameters, it falls back to the initial state `{ count: 1 }`. With `replace: true`, the counter decreases when clicking the back button.
 
 ```jsx
 import { useParams } from 'param-medic';
@@ -46,13 +46,13 @@ export default App;
 
 ## Context-Based Parameter Filtering
 
-Wrap components inside ParamContextProvider to specify which URL parameters should be managed.
+Wrap components inside `ParamContextProvider` to specify which URL parameters should be managed.
 
 - Only listed keys are used.
 - Other URL parameters remain unchanged until an update occurs.
-- On updates, only listed keys persist, unlisted ones are removed.
+- On updates, only listed keys persist, and unlisted ones are removed.
 
-### 📝 Example
+### Example
 
 Wrap your components into the **ParamContextProvider** to specify the keys which you expect. The context ensures that only these keys are used, while other parameters are ignored and removed from the url during an update.
 
@@ -67,6 +67,8 @@ createRoot(document.getElementById('root')!).render(
   </StrictMode>
 );
 ```
+
+You cann add and delete keys dynamically using the `useParamContext` hook.
 
 ## Contributing
 
