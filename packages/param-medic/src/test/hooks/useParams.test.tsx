@@ -1,5 +1,5 @@
 import '@testing-library/jest-dom';
-import React from 'react';
+import React, { act } from 'react';
 import { describe, expect, it } from 'vitest';
 import { useParams } from '../../lib/useParams';
 import { fireEvent, screen } from '../utils';
@@ -129,6 +129,40 @@ describe('useParamsHook', () => {
     expect(screen.queryByText('2')).toBeInTheDocument();
 
     fireEvent.click(reset);
+    expect(screen.queryByText('1')).toBeInTheDocument();
+  });
+
+  it('should update window history correctly', () => {
+    defineWindow({ count: 1 });
+
+    renderHookComponent(
+      () => useParams<{ count: number }>({ count: 1 }),
+      ([params, setParams]) => (
+        <div>
+          <button
+            onClick={() =>
+              setParams((prev) => ({ ...prev, count: prev.count + 1 }), {
+                replace: false,
+              })
+            }
+          >
+            <span>{params.count}</span>
+          </button>
+        </div>
+      ),
+      { keys: ['count'] }
+    );
+
+    const button = screen.getByRole('button');
+
+    fireEvent.click(button);
+
+    expect(screen.queryByText('2')).toBeInTheDocument();
+
+    act(() => {
+      window.dispatchEvent(new PopStateEvent('popstate'));
+    });
+
     expect(screen.queryByText('1')).toBeInTheDocument();
   });
 });
