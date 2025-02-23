@@ -27,6 +27,8 @@
     "test:watch": "vitest",
     "prepublishOnly": "vitest run && npm run build"
   },
+  "author": "bpetermann",
+  "license": "MIT",
   "lint-staged": {
     "**/*.ts?(x)": "eslint --fix"
   },
