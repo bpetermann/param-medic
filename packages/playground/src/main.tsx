@@ -8,7 +8,9 @@ import './index.css';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <ParamContextProvider keys={['count', 'form']}>
+    <ParamContextProvider
+      keys={['count', { name: 'form', hide: true, secret: 'secret-key' }]}
+    >
       <BrowserRouter>
         <Routes>
           <Route path='/form' element={<Form />} />

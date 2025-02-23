@@ -1,4 +1,4 @@
-import { buildUrlWithParams, useParams } from 'param-medic';
+import { useParams } from 'param-medic';
 import { NavLink, useNavigate } from 'react-router';
 import { MyParams } from './App';
 import './App.css';
@@ -10,7 +10,7 @@ function Form() {
 
   const [params, setParams, resetParams] = useParams<MyParams>({
     count: 1,
-    form: { name: '', email: '' },
+    form: { name: '', email: '', password: '' },
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -36,7 +36,9 @@ function Form() {
         </a>
       </div>
       <h1>Form</h1>
-      <NavLink to={buildUrlWithParams('/', params)}>Home</NavLink>
+      <NavLink to={`/?${new URLSearchParams(window.location.search)}`}>
+        Home
+      </NavLink>
       <div className='card'>
         <button
           onClick={() =>
@@ -75,10 +77,19 @@ function Form() {
           />
         </div>
         <div>
+          <label>Your Password:</label>
+          <input
+            type='password'
+            name='password'
+            value={params.form.password}
+            onChange={handleChange}
+          />
+        </div>
+        <div>
           <button
             onClick={(e) => {
               e.preventDefault();
-              navigate(buildUrlWithParams('/', params));
+              navigate(`/?${new URLSearchParams(window.location.search)}`);
             }}
             type='submit'
             className='submit'
