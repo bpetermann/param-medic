@@ -1,4 +1,5 @@
 import React, { ReactNode } from 'react';
+import { KeyConfig } from '../../lib/context/context';
 import { render } from './index';
 
 export function HookTestComponent<T>({
@@ -16,7 +17,7 @@ export function HookTestComponent<T>({
 export function renderHookComponent<T>(
   hook: () => T,
   children: (value: T) => ReactNode,
-  options?: { keys?: string[] }
+  options?: { keys?: (string | KeyConfig)[] }
 ) {
   return render(
     <HookTestComponent hook={hook}>{children}</HookTestComponent>,

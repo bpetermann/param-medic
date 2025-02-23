@@ -1,7 +1,7 @@
 import '@testing-library/jest-dom';
 import React, { act } from 'react';
 import { describe, expect, it } from 'vitest';
-import { useParams } from '../../lib/useParams';
+import { useParams } from '../../lib/hooks/useParams';
 import { fireEvent, screen } from '../utils';
 import { renderHookComponent } from '../utils/renderHookComponent';
 
