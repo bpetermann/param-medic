@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { buildUrlWithParams } from '../../lib/utils';
+import { buildUrlWithParams } from '../../lib/utils/params';
 
 describe('buildUrlWithParams', () => {
   it('should return the base URL when no params are provided', () => {
@@ -43,7 +43,7 @@ describe('buildUrlWithParams', () => {
   it('should handle arrays correctly', () => {
     expect(buildUrlWithParams('/list', { items: ['apple', 'banana'] })).toBe(
       '/list?items=%5B%22apple%22%2C%22banana%22%5D'
-    ); // JSON-encoded array
+    );
   });
 
   it('should handle an existing query in the URL', () => {
