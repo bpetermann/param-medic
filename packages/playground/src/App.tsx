@@ -1,4 +1,4 @@
-import { buildUrlWithParams, useParams } from 'param-medic';
+import { useParams } from 'param-medic';
 import { NavLink } from 'react-router';
 import './App.css';
 import reactLogo from './assets/react.svg';
@@ -7,15 +7,16 @@ import viteLogo from '/vite.svg';
 export type MyParams = {
   count: number;
   form: {
-    name?: string;
-    email?: string;
+    name: string;
+    email: string;
+    password: string;
   };
 };
 
 function App() {
   const [params, setParams] = useParams<MyParams>({
     count: 1,
-    form: { name: '', email: '' },
+    form: { name: '', email: '', password: '' },
   });
 
   return (
@@ -29,7 +30,9 @@ function App() {
         </a>
       </div>
       <h1>Home</h1>
-      <NavLink to={buildUrlWithParams('/form', params)}>Form</NavLink>
+      <NavLink to={`/?${new URLSearchParams(window.location.search)}`}>
+        Form
+      </NavLink>
       <div className='card'>
         <button
           onClick={() =>
