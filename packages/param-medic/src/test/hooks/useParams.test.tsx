@@ -165,4 +165,26 @@ describe('useParamsHook', () => {
 
     expect(screen.queryByText('1')).toBeInTheDocument();
   });
+
+  it('should convert encrypted window params', () => {
+    const expected = 'Alice';
+    defineWindow({
+      form: 'CEcNEwgRD1FHOB8MABdHWA8OCBgaCUFIRxVBAgYcMwIOEwwYAwgKFFFJQQIEB14cCgsXR1lQVEYeX1BPUkce',
+    });
+
+    renderHookComponent(
+      () =>
+        useParams<{ form: { name: string; email: string; password: string } }>({
+          form: { name: '', email: '', password: '' },
+        }),
+      ([params]) => (
+        <div>
+          <span>{params.form.name}</span>
+        </div>
+      ),
+      { keys: [{ name: 'form', hide: true, secret: 'secret-key' }] }
+    );
+
+    expect(screen.queryByText(expected)).toBeInTheDocument();
+  });
 });
