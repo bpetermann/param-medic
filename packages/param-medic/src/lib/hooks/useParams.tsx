@@ -1,6 +1,10 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useParamContext } from './context/actions';
-import { convertParams, parse } from './utils';
+import { useParamContext } from '../context/actions';
+import {
+  convertParams,
+  isKeyAllowed,
+  parseSearchParams,
+} from '../utils/params';
 
 export function useParams<T extends Record<string, unknown>>(
   initialState?: T
@@ -16,11 +20,11 @@ export function useParams<T extends Record<string, unknown>>(
 
   const getUrlParams = useMemo(() => {
     if (typeof window === 'undefined') return {} as T;
-    return Object.fromEntries(
-      [...new URLSearchParams(window.location.search).entries()]
-        .filter(([key]) => !isInContext || paramKeys.includes(key))
-        .map(([key, value]) => [key, parse(value)])
-    ) as T;
+    return parseSearchParams(
+      new URLSearchParams(window.location.search),
+      isInContext,
+      paramKeys
+    );
   }, [isInContext, paramKeys]);
 
   const [searchParams, setSearchParamsState] = useState<T>(() => {
@@ -32,14 +36,10 @@ export function useParams<T extends Record<string, unknown>>(
     const handlePopState = () => {
       if (isMounted) {
         setSearchParamsState(
-          Object.assign(
-            {},
-            stableInitialState,
-            Object.fromEntries(
-              [...new URLSearchParams(window.location.search).entries()]
-                .filter(([key]) => !isInContext || paramKeys.includes(key))
-                .map(([key, value]) => [key, parse(value)])
-            )
+          parseSearchParams(
+            new URLSearchParams(window.location.search),
+            isInContext,
+            paramKeys
           ) as T
         );
       }
@@ -61,11 +61,13 @@ export function useParams<T extends Record<string, unknown>>(
 
       const filteredParams: T = isInContext
         ? (Object.fromEntries(
-            Object.entries(newParams).filter(([key]) => paramKeys.includes(key))
+            Object.entries(newParams).filter(([key]) =>
+              isKeyAllowed(key, paramKeys)
+            )
           ) as T)
         : newParams;
 
-      const newSearchParams = convertParams(filteredParams);
+      const newSearchParams = convertParams(filteredParams, paramKeys);
 
       if (options?.replace) {
         window.history.replaceState({}, '', `?${newSearchParams.toString()}`);
@@ -82,10 +84,10 @@ export function useParams<T extends Record<string, unknown>>(
     if (typeof window === 'undefined') return;
 
     setSearchParamsState(initialState ?? ({} as T));
-    const resetSearchParams = convertParams(initialState ?? {});
+    const resetSearchParams = convertParams(initialState ?? {}, paramKeys);
 
     window.history.replaceState({}, '', `?${resetSearchParams.toString()}`);
-  }, [initialState]);
+  }, [initialState, paramKeys]);
 
   return [searchParams, setSearchParams, resetParams];
 }
