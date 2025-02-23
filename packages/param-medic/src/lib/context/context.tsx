@@ -13,6 +13,9 @@ type ParamContextType = {
   isInContext: boolean;
 };
 
+/**
+ * Context for managing URL search parameters dynamically.
+ */
 export const ParamContext = createContext<ParamContextType>({
   paramKeys: [],
   deleteKey: () => {},
