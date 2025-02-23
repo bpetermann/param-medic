@@ -43,6 +43,18 @@ export const parseSearchParams = (
   }, {} as Record<string, unknown>);
 };
 
+/**
+ * Constructs a URL with query parameters.
+ *
+ * @template T A record of key-value pairs representing query parameters.
+ * @param {string} [url='/'] The base URL.
+ * @param {T} [params] The query parameters to append to the URL.
+ * @returns {string} The URL with appended query parameters.
+ *
+ * @example
+ * buildUrlWithParams('/api/data', { page: 1, filter: 'active' });
+ * // Output: "/api/data?page=1&filter=active"
+ */
 export const buildUrlWithParams = <T extends Record<string, unknown>>(
   url: string = '/',
   params?: T

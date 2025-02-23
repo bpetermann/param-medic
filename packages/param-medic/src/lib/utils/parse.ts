@@ -10,6 +10,9 @@ export const parse = (data: string) => {
   }
 };
 
+export const getKeyName = (key: string | KeyConfig) =>
+  typeof key === 'string' ? key : key.name;
+
 export const parseWithConfig = (data: string, config?: string | KeyConfig) => {
   if (isKeyConfig(config) && config.secret)
     return parse(decrypt(data, config.secret));
