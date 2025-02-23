@@ -1,6 +1,6 @@
 # Param Medic
 
-**Param-medic** helps you manage your state using URL parameters and provides a hook for easy retrieval, updating, and deletion.
+**Param-medic** helps you manage your state in React SPAs using URL parameters and provides a hook for easy retrieval, updating, and deletion.
 
 ## Features
 
