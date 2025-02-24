@@ -187,4 +187,26 @@ describe('useParamsHook', () => {
 
     expect(screen.queryByText(expected)).toBeInTheDocument();
   });
+
+  it('should not convert non encrypted params', () => {
+    const expected = 'Alice';
+    defineWindow({
+      form: 'CEcNEwgRD1FHOB8MABdHWA8OCBgaCUFIRxVBAgYcMwIOEwwYAwgKFFFJQQIEB14cCgsXR1lQVEYeX1BPUkce',
+    });
+
+    renderHookComponent(
+      () =>
+        useParams<{ form: { name: string; email: string; password: string } }>({
+          form: { name: '', email: '', password: '' },
+        }),
+      ([params]) => (
+        <div>
+          <span>{params.form.name}</span>
+        </div>
+      ),
+      { keys: [{ name: 'form' }] }
+    );
+
+    expect(screen.queryByText(expected)).not.toBeInTheDocument();
+  });
 });

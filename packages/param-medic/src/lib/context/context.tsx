@@ -1,10 +1,8 @@
 import { createContext } from 'react';
 
-export interface KeyConfig {
-  name: string;
-  hide?: boolean;
-  secret?: string;
-}
+export type KeyConfig =
+  | { name: string; hide?: false; secret?: never }
+  | { name: string; hide: true; secret: string };
 
 type ParamContextType = {
   paramKeys: (KeyConfig | string)[];
