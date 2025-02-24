@@ -1,4 +1,4 @@
-# Param Medic
+# Param Medic &middot; ![NPM Version](https://img.shields.io/npm/v/param-medic) ![NPM Type Definitions](https://img.shields.io/npm/types/param-medic) ![NPM Downloads](https://img.shields.io/npm/dw/param-medic)
 
 **Param-medic** helps you manage your state in React SPAs using URL parameters and provides a hook for easy retrieval, updating, and deletion.
 
@@ -68,7 +68,22 @@ createRoot(document.getElementById('root')!).render(
 );
 ```
 
-You cann add and delete keys dynamically using the `useParamContext` hook.
+If you want to prevent certain values from appearing as plain text in the URL, you can define a key as an object and add `hide: true` along with a `secret`. The value will be encrypted before being stored in the URL and decrypted when accessed.
+
+> **Note:** This encryption is only for obscuring values from plain sight and should not be considered a secure encryption method.
+
+```jsx
+<ParamContextProvider
+  keys={[
+    'count',
+    { name: 'search', hide: true, secret: import.meta.env.VITE_SOME_KEY },
+  ]}
+>
+  <App />
+</ParamContextProvider>
+```
+
+You can add and delete keys dynamically using the `useParamContext` hook.
 
 ## Contributing
 
