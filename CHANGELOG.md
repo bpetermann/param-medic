@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+### Added
+
+- Added support for encrypted parameters via `{ hide: true, secret: 'your-secret' }`.
+- Only whitelisted keys are used, all others are ignored and removed from the URL on updates.
+
 ## [0.1.0] - 2024-02-22
 
 ### Added
