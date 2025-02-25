@@ -4,19 +4,20 @@ import './App.css';
 import reactLogo from './assets/react.svg';
 import viteLogo from '/vite.svg';
 
-export type MyParams = {
+export type Params = {
   count: number;
   form: {
     name: string;
     email: string;
     password: string;
+    agreement: boolean;
   };
 };
 
 function App() {
-  const [params, setParams] = useParams<MyParams>({
+  const [params, setParams] = useParams<Params>({
     count: 1,
-    form: { name: '', email: '', password: '' },
+    form: { name: '', email: '', password: '', agreement: false },
   });
 
   return (
@@ -30,7 +31,7 @@ function App() {
         </a>
       </div>
       <h1>Home</h1>
-      <NavLink to={`/?${new URLSearchParams(window.location.search)}`}>
+      <NavLink to={`/form?${new URLSearchParams(window.location.search)}`}>
         Form
       </NavLink>
       <div className='card'>
@@ -49,14 +50,7 @@ function App() {
         >
           count is {params.count}
         </button>
-
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
       </div>
-      <p className='read-the-docs'>
-        Click on the Vite and React logos to learn more
-      </p>
     </>
   );
 }

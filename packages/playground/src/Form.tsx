@@ -1,27 +1,34 @@
 import { useParams } from 'param-medic';
 import { NavLink, useNavigate } from 'react-router';
-import { MyParams } from './App';
+import { Params } from './App';
 import './App.css';
 import reactLogo from './assets/react.svg';
 import viteLogo from '/vite.svg';
 
+const options = { replace: false };
+
 function Form() {
   const navigate = useNavigate();
 
-  const [params, setParams, resetParams] = useParams<MyParams>({
+  const [params, setParams, resetParams] = useParams<Params>({
     count: 1,
-    form: { name: '', email: '', password: '' },
+    form: { name: '', email: '', password: '', agreement: false },
   });
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFormChange = ({
+    target: { name, value },
+  }: React.ChangeEvent<HTMLInputElement>) => {
+    const isAgreement = name === 'agreement';
+
     setParams(
       (prev) => ({
         ...prev,
-        form: { ...prev.form, [e.target.name]: e.target.value },
+        form: {
+          ...prev.form,
+          [name]: isAgreement ? !prev.form.agreement : value,
+        },
       }),
-      {
-        replace: false,
-      }
+      options
     );
   };
 
@@ -47,9 +54,7 @@ function Form() {
                 ...prev,
                 count: prev.count + 1,
               }),
-              {
-                replace: false,
-              }
+              options
             )
           }
         >
@@ -59,31 +64,47 @@ function Form() {
 
       <form>
         <div>
-          <label>Your Name:</label>
+          <label htmlFor='name'>Your Name:</label>
           <input
             type='text'
             name='name'
+            id='name'
+            autoComplete=''
             value={params.form.name}
-            onChange={handleChange}
+            onChange={handleFormChange}
           />
         </div>
         <div>
-          <label>Your Email:</label>
+          <label htmlFor='email'>Your Email:</label>
           <input
             type='text'
             name='email'
+            id='email'
             value={params.form.email}
-            onChange={handleChange}
+            onChange={handleFormChange}
           />
         </div>
         <div>
-          <label>Your Password:</label>
+          <label htmlFor='password'>Your Password:</label>
           <input
             type='password'
             name='password'
+            id='password'
             value={params.form.password}
-            onChange={handleChange}
+            onChange={handleFormChange}
           />
+        </div>
+        <div className='agreement'>
+          <input
+            type='checkbox'
+            id='agreement'
+            name='agreement'
+            checked={params.form.agreement}
+            onChange={handleFormChange}
+          />
+          <label htmlFor='agreement' className='read-the-docs'>
+            I agree with the terms and conditions
+          </label>
         </div>
         <div>
           <button
@@ -107,15 +128,6 @@ function Form() {
           </button>
         </div>
       </form>
-
-      <div className='card'>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className='read-the-docs'>
-        Click on the Vite and React logos to learn more
-      </p>
     </>
   );
 }

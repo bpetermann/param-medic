@@ -59,6 +59,11 @@ form > div {
   font-size: large;
 }
 
+.agreement {
+  flex-direction: row;
+  font-size: 16px;
+}
+
 form > div:last-of-type {
   display: flex;
   flex-direction: row;
