@@ -1,4 +1,4 @@
-# Param Medic &middot; ![NPM Version](https://img.shields.io/npm/v/param-medic) ![NPM Type Definitions](https://img.shields.io/npm/types/param-medic) ![NPM Downloads](https://img.shields.io/npm/dw/param-medic)
+# Param Medic &middot; ![NPM Version](https://img.shields.io/npm/v/param-medic) ![NPM Type Definitions](https://img.shields.io/npm/types/param-medic) ![NPM Downloads](https://img.shields.io/npm/dy/param-medic)
 
 **Param-medic** helps you manage your state in React SPAs using URL parameters and provides a hook for easy retrieval, updating, and deletion.
 
