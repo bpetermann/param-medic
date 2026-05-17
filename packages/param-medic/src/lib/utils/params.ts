@@ -1,5 +1,5 @@
 import { KeyConfig } from '../context/context';
-import { convertParamString, parseWithConfig } from './parse';
+import { decode, encode } from './codec';
 
 export const getKeyConfig = (key: string, paramKeys: (string | KeyConfig)[]) =>
   paramKeys.find((value) =>
@@ -24,7 +24,7 @@ export const convertParams = <T extends Record<string, unknown>>(
     if (value == null) continue;
     const config = getKeyConfig(key, paramKeys);
 
-    newSearchParams.set(key, convertParamString(value, config));
+    newSearchParams.set(key, encode(value, isKeyConfig(config) ? config : undefined));
   }
 
   return newSearchParams;
@@ -37,7 +37,8 @@ export const parseSearchParams = (
 ): Record<string, unknown> => {
   return [...searchParams.entries()].reduce((acc, [key, value]) => {
     if (!isInContext || isKeyAllowed(key, paramKeys)) {
-      acc[key] = parseWithConfig(value, getKeyConfig(key, paramKeys));
+      const config = getKeyConfig(key, paramKeys);
+      acc[key] = decode(value, isKeyConfig(config) ? config : undefined);
     }
     return acc;
   }, {} as Record<string, unknown>);
@@ -57,17 +58,16 @@ export const parseSearchParams = (
  */
 export const buildUrlWithParams = <T extends Record<string, unknown>>(
   url: string = '/',
-  params?: T
+  params?: T,
+  keys?: (string | KeyConfig)[]
 ): string => {
   if (!params || Object.keys(params).length === 0) return url;
 
   const paramString = Object.entries(params)
-    .map(
-      ([key, value]) =>
-        `${encodeURIComponent(key)}=${encodeURIComponent(
-          typeof value === 'object' ? JSON.stringify(value) : String(value)
-        )}`
-    )
+    .map(([key, value]) => {
+      const config = keys ? getKeyConfig(key, keys) : undefined;
+      return `${encodeURIComponent(key)}=${encodeURIComponent(encode(value, isKeyConfig(config) ? config : undefined))}`;
+    })
     .join('&');
 
   return url.includes('?') ? `${url}&${paramString}` : `${url}?${paramString}`;

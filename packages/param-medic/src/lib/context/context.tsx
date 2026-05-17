@@ -22,3 +22,6 @@ export const ParamContext = createContext<ParamContextType>({
 });
 
 export const useParamContext = () => useContext(ParamContext);
+
+export const getKeyName = (key: string | KeyConfig): string =>
+  typeof key === 'string' ? key : key.name;

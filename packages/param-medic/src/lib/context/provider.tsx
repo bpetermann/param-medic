@@ -1,6 +1,5 @@
 import { PropsWithChildren, useState } from 'react';
-import { getKeyName } from '../utils/parse';
-import { KeyConfig, ParamContext } from './context';
+import { KeyConfig, ParamContext, getKeyName } from './context';
 
 /**
  * Provides a context for managing dynamic URL search parameters.
