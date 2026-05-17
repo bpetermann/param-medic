@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useParamContext } from '../context/actions';
+import { useParamContext } from '../context/context';
 import {
   convertParams,
   isKeyAllowed,

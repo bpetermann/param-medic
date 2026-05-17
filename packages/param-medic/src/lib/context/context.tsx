@@ -1,4 +1,4 @@
-import { createContext } from 'react';
+import { createContext, useContext } from 'react';
 
 export type KeyConfig =
   | { name: string; hide?: false; secret?: never }
@@ -20,3 +20,5 @@ export const ParamContext = createContext<ParamContextType>({
   addKey: () => {},
   isInContext: false,
 });
+
+export const useParamContext = () => useContext(ParamContext);
