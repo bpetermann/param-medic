@@ -1,6 +1,6 @@
 import React, { ReactNode } from 'react';
 import { KeyConfig } from '../../lib/context/context';
-import { render } from './index';
+import { render, renderWithoutContext } from './index';
 
 export function HookTestComponent<T>({
   hook,
@@ -22,5 +22,15 @@ export function renderHookComponent<T>(
   return render(
     <HookTestComponent hook={hook}>{children}</HookTestComponent>,
     options
+  );
+}
+
+// eslint-disable-next-line react-refresh/only-export-components
+export function renderHookComponentWithoutContext<T>(
+  hook: () => T,
+  children: (value: T) => ReactNode,
+) {
+  return renderWithoutContext(
+    <HookTestComponent hook={hook}>{children}</HookTestComponent>
   );
 }

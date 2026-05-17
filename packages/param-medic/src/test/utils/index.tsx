@@ -15,4 +15,4 @@ function customRender(
 // eslint-disable-next-line react-refresh/only-export-components
 export * from '@testing-library/react';
 
-export { customRender as render };
+export { customRender as render, render as renderWithoutContext };
