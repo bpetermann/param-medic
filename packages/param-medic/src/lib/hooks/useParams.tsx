@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParamContext } from '../context/context';
+import { NavigationAdapter, browserAdapter } from '../utils/navigation';
 import {
   convertParams,
   isKeyAllowed,
@@ -10,13 +11,15 @@ import {
  * Custom hook to manage URL search parameters as state.
  * @template T The shape of the parameters object.
  * @param {T} [initialState] Optional initial state for parameters.
+ * @param {NavigationAdapter} [nav] Navigation adapter (defaults to browser history).
  * @returns
  * - `params`: The current parameters object.
  * - `setParams`: Function to update parameters.
  * - `resetParams`: Function to reset parameters to their initial state.
  */
 export function useParams<T extends Record<string, unknown>>(
-  initialState?: T
+  initialState?: T,
+  nav: NavigationAdapter = browserAdapter
 ): [
   params: T,
   setParams: (setFn: (prev: T) => T, options?: { replace?: boolean }) => void,
@@ -27,44 +30,28 @@ export function useParams<T extends Record<string, unknown>>(
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const stableInitialState = useMemo(() => initialState || ({} as T), []);
 
-  const getUrlParams = useMemo(() => {
-    if (typeof window === 'undefined') return {} as T;
-    return parseSearchParams(
-      new URLSearchParams(window.location.search),
-      isInContext,
-      paramKeys
-    );
-  }, [isInContext, paramKeys]);
-
-  const [searchParams, setSearchParamsState] = useState<T>(() => {
-    return Object.assign({}, stableInitialState, getUrlParams);
-  });
+  const [searchParams, setSearchParamsState] = useState<T>(() =>
+    Object.assign(
+      {},
+      stableInitialState,
+      parseSearchParams(new URLSearchParams(nav.getSearch()), isInContext, paramKeys)
+    )
+  );
 
   useEffect(() => {
-    let isMounted = true;
-    const handlePopState = () => {
-      if (isMounted) {
-        setSearchParamsState(
-          parseSearchParams(
-            new URLSearchParams(window.location.search),
-            isInContext,
-            paramKeys
-          ) as T
-        );
-      }
-    };
-
-    window.addEventListener('popstate', handlePopState);
-    return () => {
-      isMounted = false;
-      window.removeEventListener('popstate', handlePopState);
-    };
-  }, [stableInitialState, isInContext, paramKeys]);
+    return nav.listen(() => {
+      setSearchParamsState(
+        parseSearchParams(
+          new URLSearchParams(nav.getSearch()),
+          isInContext,
+          paramKeys
+        ) as T
+      );
+    });
+  }, [nav, isInContext, paramKeys]);
 
   const setSearchParams = useCallback(
     (setFn: (prev: T) => T, options?: { replace?: boolean }) => {
-      if (typeof window === 'undefined') return;
-
       const newParams = setFn(searchParams);
       if (JSON.stringify(newParams) === JSON.stringify(searchParams)) return;
 
@@ -76,27 +63,24 @@ export function useParams<T extends Record<string, unknown>>(
           ) as T)
         : newParams;
 
-      const newSearchParams = convertParams(filteredParams, paramKeys);
+      const qs = convertParams(filteredParams, paramKeys).toString();
 
       if (options?.replace) {
-        window.history.replaceState({}, '', `?${newSearchParams.toString()}`);
+        nav.replace(qs);
       } else {
-        window.history.pushState({}, '', `?${newSearchParams.toString()}`);
+        nav.push(qs);
       }
 
       setSearchParamsState(filteredParams);
     },
-    [searchParams, paramKeys, isInContext]
+    [searchParams, paramKeys, isInContext, nav]
   );
 
   const resetParams = useCallback(() => {
-    if (typeof window === 'undefined') return;
-
     setSearchParamsState(initialState ?? ({} as T));
-    const resetSearchParams = convertParams(initialState ?? {}, paramKeys);
-
-    window.history.replaceState({}, '', `?${resetSearchParams.toString()}`);
-  }, [initialState, paramKeys]);
+    const qs = convertParams(initialState ?? {}, paramKeys).toString();
+    nav.replace(qs);
+  }, [initialState, paramKeys, nav]);
 
   return [searchParams, setSearchParams, resetParams];
 }
